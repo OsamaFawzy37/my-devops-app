@@ -37,4 +37,3 @@ jobs:
           git config user.name "GitHub Actions"
           git add k8s/deployment.yaml
           git commit -m "update image tag to ${{ github.sha }}"
-          git push origin master
