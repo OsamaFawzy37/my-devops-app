@@ -24,6 +24,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
+          push: true
           context: .
           file: Dockerfile
           tags: ${{ secrets.DOCKER_USERNAME }}/my-devops-app:latest
