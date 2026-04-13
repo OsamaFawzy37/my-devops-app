@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: my-devops-app
-          image: osama694/my-devops-app:678dff1b30291bf67ed72d176a8dd553b8e6424a
+          image: osama694/my-devops-app:149d8dd23827b1485eb2f6f3f862868cfde28103
           ports:
             - containerPort: 5000
           env:
