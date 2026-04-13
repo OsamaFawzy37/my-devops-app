@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: my-devops-app
+spec:
+  replicas: 2 # number of replicas of the pod
+  selector:
+    matchLabels:
+      app: my-devops-app
+  template:
+    metadata:
+      name: my-devops-app
+      labels:
+        app: my-devops-app
+    spec:
+      containers:
+        - name: my-devops-app
+          image: osama694/my-devops-app:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: PORT
+              value: "5000"
+            - name: HOST
+              value: "0.0.0.0"
