@@ -28,3 +28,11 @@ jobs:
           context: .
           file: Dockerfile
           tags: ${{ secrets.DOCKER_USERNAME }}/my-devops-app:latest
+      - name: Update deployment.yaml
+        run: |
+          sed -i "s|image:.*|image: ${{ secrets.DOCKER_USERNAME }}/my-devops-app:${{ github.sha }}|" k8s/deployment.yaml
+          git config user.email "ci@github.com"
+          git config user.name "GitHub Actions"
+          git add k8s/deployment.yaml
+          git commit -m "update image tag to ${{ github.sha }}"
+          git push
