@@ -1,39 +1,49 @@
 name: CI pipeline
-
 on:
   push:
     branches:
-      - master
-  pull_request:
-    branches:
-      - master
+      - master # اتأكد ان اسم البرانش صح (main ولا master)
+    paths-ignore:
+      - 'k8s/**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    # إضافة صلاحيات الكتابة للـ Token التلقائي
+    permissions:
+      contents: write 
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # يفضل دايما تستخدم أحدث نسخة v4
         with:
           token: ${{ secrets.GH_TOKEN }}
       
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       
       - name: Build and push Docker image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
-          push: true
           context: .
-          file: Dockerfile
-          tags: ${{ secrets.DOCKER_USERNAME }}/my-devops-app:latest
-      - name: Update deployment.yaml
+          push: true
+          # بنرفع صورتين: واحدة ثابتة (latest) وواحدة برقم الـ Commit (SHA)
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/my-devops-app:latest
+            ${{ secrets.DOCKER_USERNAME }}/my-devops-app:${{ github.sha }}
+      
+      - name: Update Kubernetes Manifest
         run: |
+          # تعديل التاج في ملف الـ deployment
           sed -i "s|image:.*|image: ${{ secrets.DOCKER_USERNAME }}/my-devops-app:${{ github.sha }}|" k8s/deployment.yaml
-          git config user.email "ci@github.com"
-          git config user.name "GitHub Actions"
+          
+          # إعدادات الـ Git للكتابة
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
           git add k8s/deployment.yaml
-          git commit -m "update image tag to ${{ github.sha }}"
+          git commit -m "chore: update image tag to ${{ github.sha }} [skip ci]"
+          git push
