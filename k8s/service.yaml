@@ -7,6 +7,6 @@ spec:
     app: my-devops-app
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 5000
-  type: ClusterIP
+      port: 5000  # port of the service
+      targetPort: 5000  # port of the container
+  type: NodePort  # type of the service
