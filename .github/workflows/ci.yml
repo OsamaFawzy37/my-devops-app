@@ -4,11 +4,9 @@ on:
   push:
     branches:
       - master
-    paths-ignore:
-      - 'k8s/**'
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -39,4 +37,4 @@ jobs:
           git config user.name "GitHub Actions"
           git add k8s/deployment.yaml
           git commit -m "update image tag to ${{ github.sha }}"
-          git push
+          git push origin master
